@@ -11,3 +11,6 @@ wheels/
 
 *.lock
 .python-verion
+
+# 示例产生的文件
+douban.txt

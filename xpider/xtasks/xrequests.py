@@ -3,14 +3,16 @@ import sys
 from typing import Callable, Optional, Any
 from ..interfaces import XTask
 from ..cfgs import get_cfg
+from ..xlogger import LOGGER
+from ..xresponses import Response
 
 
 if sys.version_info < (3, 10):
-    CALLABLE = Callable[[requests.Response], Any]
+    CALLABLE = Callable[[Response], Any]
 else:
     from typing import TypeAlias
 
-    CALLABLE: TypeAlias = Callable[[requests.Response], Any]
+    CALLABLE: TypeAlias = Callable[[Response], Any]
 
 
 class Request(XTask):
@@ -24,15 +26,27 @@ class Request(XTask):
         self.kwargs = kwargs
         self.callback = callback
 
-    def run(self) -> requests.Response:
-
-        response = requests.request(
+    def run(self) -> Response:
+        LOGGER.info(f"请求方法 {self.method} | 请求URL:{self.url}")
+        LOGGER.debug(f"请求头: {get_cfg('headers')}")
+        LOGGER.debug(f"请求参数: {self.kwargs}")
+        LOGGER.debug("requests.request(**"+str(dict(
             method=self.method,
             url=self.url,
             headers=(get_cfg("headers")),
             **self.kwargs,
-        )
-        self.callback(response)
+        ))+")")
+
+        response = Response(requests.request(
+            method=self.method,
+            url=self.url,
+            headers=(get_cfg("headers")),
+            **self.kwargs,
+        ))
+
+        for i in self.callback(response):
+            i.run()
+
         return response
 
 
@@ -42,7 +56,7 @@ class GetRq(Request):
 
     参数:
         url: 网址
-        callback: 回调函数, 接收 requests.Response 对象作为参数
+        callback: 回调函数, 接收 Response 对象作为参数
     """
 
     def __init__(self, url: str, callback: CALLABLE, **kwargs):
