@@ -30,12 +30,19 @@ class Spider(ABC):
     def __init__(self): ...
 
     @abstractmethod
-    def begin(self, response: Optional[Response], *args, **kwargs) -> Generator:
+    def begin(self) -> Generator:
         """
         用户层的爬虫入口函数
         所有用户的爬虫都应该实现这个方法
         """
         raise NotImplementedError("请实现 begin 方法")
+
+    def parse(self, response: Optional[Response], *args, **kwargs) -> Generator:
+        """
+        解析响应
+        子类可以重写这个方法来实现自己的解析逻辑
+        """
+        ...
 
     def on_finish(self):
         """
@@ -56,7 +63,7 @@ class Spider(ABC):
         此函数不应该被用户重写
         """
         try:
-            for xtask in self.begin(None):
+            for xtask in self.begin():
                 xtask.run()
         except SpiderStopped as e:
             print(f"爬虫停止: {e}")
