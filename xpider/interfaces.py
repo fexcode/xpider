@@ -1,5 +1,6 @@
 from typing import final, Generator, Optional
 from abc import ABC, abstractmethod
+import json
 from .xresponses import Response
 from .xerrors import SpiderStopped
 
@@ -27,7 +28,8 @@ class Spider(ABC):
     用户层的爬虫入口函数是 begin 方法
     """
 
-    def __init__(self): ...
+    def __init__(self):
+        self.data = []
 
     @abstractmethod
     def begin(self) -> Generator:
@@ -62,10 +64,27 @@ class Spider(ABC):
         启动爬虫
         此函数不应该被用户重写
         """
+        from .xprocess import Process
+
+        proc = Process(self.begin)
         try:
-            for xtask in self.begin():
-                xtask.run()
+            proc.run()
         except SpiderStopped as e:
             print(f"爬虫停止: {e}")
         finally:
             self.on_finish()
+            self.data = proc.data
+            return self.data
+
+    def adddata(self, data):
+        """
+        新增数据
+        """
+        self.data.append(data)
+
+    def save(self, filename: str):
+        """
+        保存爬取的数据到文件
+        """
+        with open(filename, "w", encoding="utf-8") as f:
+            json.dump(self.data, f, ensure_ascii=False, indent=4)

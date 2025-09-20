@@ -5,6 +5,8 @@ build/
 dist/
 wheels/
 *.egg-info
+.ruff_cache/
+.VSCodeCounter
 
 # Virtual environments
 .venv
@@ -14,3 +16,4 @@ wheels/
 
 # 示例产生的文件
 douban.txt
+result.txt
