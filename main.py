@@ -1,8 +1,8 @@
 from typing import Any, Generator
-from xpider import CONFIG, Spider, GetRq, Response
+from xpider import GetConfig, Spider, GetRq, Response, LOGGER
 
-print(CONFIG)
-CONFIG["headers"]["referer"] = "https://cn.bing.com/"
+LOGGER.log_level = 1
+GetConfig("headers").set("Referer", "https://cn.bing.com/")
 
 
 class MySpider(Spider):

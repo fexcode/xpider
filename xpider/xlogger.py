@@ -17,23 +17,23 @@ class Logger:
         self.console = console.Console()
 
     def debug(self, *message):
-        if self.log_level >= 0:
+        if self.log_level <= 0:
             self.console.print(f"DEBUG|\t", *message)
 
     def info(self, *message):
-        if self.log_level >= 1:
+        if self.log_level <= 1:
             self.console.print(f"INFO|\t[blue]{message}[/blue]")
 
     def warning(self, *message):
-        if self.log_level >= 2:
+        if self.log_level <= 2:
             self.console.print(f"WARNING|\t[yellow]{message}[/yellow]")
 
     def error(self, *message):
-        if self.log_level >= 3:
+        if self.log_level <= 3:
             self.console.print(f"ERROR|\t[red]{message}[/red]")
 
     def critical(self, *message):
-        if self.log_level >= 4:
+        if self.log_level <= 4:
             self.console.print(f"CRITICAL|\t[bold red]{message}[/bold red]")
 
 

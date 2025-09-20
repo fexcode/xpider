@@ -1,7 +1,5 @@
 from .interfaces import XTask
-from .xlogger import LOGGER
-from typing import Generator, Callable, Any
-
+from typing import Generator, Callable
 
 class Process:
     def __init__(self, fun: Callable[..., Generator]):
